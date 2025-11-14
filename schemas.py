@@ -1,48 +1,65 @@
 """
-Database Schemas
+Database Schemas for Portfolio CMS
 
-Define your MongoDB collection schemas here using Pydantic models.
-These schemas are used for data validation in your application.
-
-Each Pydantic model represents a collection in your database.
-Model name is converted to lowercase for the collection name:
-- User -> "user" collection
-- Product -> "product" collection
-- BlogPost -> "blogs" collection
+Each Pydantic model = one MongoDB collection (lowercased class name).
 """
 
 from pydantic import BaseModel, Field
-from typing import Optional
+from typing import List, Optional
 
-# Example schemas (replace with your own):
+# Auth
+class Admin(BaseModel):
+    email: str
+    password_hash: str
+    role: str = Field(default="admin")
 
-class User(BaseModel):
-    """
-    Users collection schema
-    Collection name: "user" (lowercase of class name)
-    """
-    name: str = Field(..., description="Full name")
-    email: str = Field(..., description="Email address")
-    address: str = Field(..., description="Address")
-    age: Optional[int] = Field(None, ge=0, le=120, description="Age in years")
-    is_active: bool = Field(True, description="Whether user is active")
+# Content
+class TechItem(BaseModel):
+    name: str
+    category: str = Field(default="general")
+    level: Optional[str] = None
+    icon: Optional[str] = None  # lucide icon name
 
-class Product(BaseModel):
-    """
-    Products collection schema
-    Collection name: "product" (lowercase of class name)
-    """
-    title: str = Field(..., description="Product title")
-    description: Optional[str] = Field(None, description="Product description")
-    price: float = Field(..., ge=0, description="Price in dollars")
-    category: str = Field(..., description="Product category")
-    in_stock: bool = Field(True, description="Whether product is in stock")
+class Project(BaseModel):
+    title: str
+    slug: str
+    summary: str
+    tags: List[str] = []
+    tech: List[str] = []
+    cover: Optional[str] = None  # image url
+    logo: Optional[str] = None
+    demo_url: Optional[str] = None
+    repo_url: Optional[str] = None
+    # detail fields
+    tldr: Optional[str] = None
+    role: Optional[str] = None
+    timeline: Optional[str] = None
+    wireframes: List[str] = []  # image urls
+    screenshots: List[str] = [] # image urls
+    video: Optional[str] = None # mp4 or youtube url
+    mermaid: Optional[str] = None
+    learnings: List[str] = []
+    kpis: List[str] = []
 
-# Add your own schemas here:
-# --------------------------------------------------
+class BlogPost(BaseModel):
+    title: str
+    slug: str
+    excerpt: str
+    content: str
+    tags: List[str] = []
+    read_time: int = 4
+    cover: Optional[str] = None
 
-# Note: The Flames database viewer will automatically:
-# 1. Read these schemas from GET /schema endpoint
-# 2. Use them for document validation when creating/editing
-# 3. Handle all database operations (CRUD) directly
-# 4. You don't need to create any database endpoints!
+class Experience(BaseModel):
+    org: str
+    role: str
+    start: str
+    end: str
+    summary: str
+
+class Education(BaseModel):
+    school: str
+    degree: str
+    start: str
+    end: str
+    summary: str
